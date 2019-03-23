@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <div id="toolbar">
+        颜色:<input type="color" onchange="changeColor(this)" />
+        宽度:<input type="range" value="1" min="1" max="10" step="1">
+    </div>
+    <canvas id="canvas" width="500" height="500" style="border:1px solid #000;" onchange="changeThickness(this)">
+        你的浏览器不支持画布
+    </canvas>
+
+    <script type="text/javascript">
+        var canvas;
+        var context;
+        var isDrawing = false;
+        window.onload = function() {
+            canvas = document.getElementById('canvas');
+            context = canvas.getContext('2d');
+            canvas.onmousedown = startDrawing;
+            canvas.onmouseup = stopDrawing;
+            canvas.onmouseout = stopDrawing;
+            canvas.onmousemove = draw;
+        }
+        function changeColor(el) {
+            var color = el.value;
+            context.strokeStyle = color;
+        }
+        function changeThickness(el) {
+            var thickness = el.value;
+            context.lineWidth = thickness;
+        }
+        function startDrawing(e) {
+            isDrawing = true;
+            context.beginPath();
+            var x = e.pageX - canvas.offsetLeft;
+            var y = e.pageY - canvas.offsetTop;
+            context.moveTo(x, y);
+        }
+        function draw(e) {
+            if(isDrawing) {
+                var x = e.pageX - canvas.offsetLeft;
+                var y = e.pageY - canvas.offsetTop;
+                context.lineTo(x, y);
+                context.stroke();
+            }
+        }
+        function stopDrawing() {
+            isDrawing = false;
+        }
+    </script>
+</body>
+</html>
