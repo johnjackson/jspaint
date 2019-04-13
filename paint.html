@@ -6,12 +6,11 @@
 <body>
     <div id="toolbar">
         颜色:<input type="color" onchange="changeColor(this)" />
-        宽度:<input type="range" value="1" min="1" max="10" step="1">
+        宽度:<input  type="range" id="width_slide" value="1" min="1" max="100" step="1">
     </div>
-    <canvas id="canvas" width="500" height="500" style="border:1px solid #000;" onchange="changeThickness(this)">
-        你的浏览器不支持画布
+    <canvas id="canvas" width="500" height="500" style="border:1px solid #000;" >
     </canvas>
-
+    <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript">
         var canvas;
         var context;
@@ -19,33 +18,46 @@
         window.onload = function() {
             canvas = document.getElementById('canvas');
             context = canvas.getContext('2d');
+
             canvas.onmousedown = startDrawing;
             canvas.onmouseup = stopDrawing;
             canvas.onmouseout = stopDrawing;
             canvas.onmousemove = draw;
         }
+        //改颜色
         function changeColor(el) {
             var color = el.value;
             context.strokeStyle = color;
         }
-        function changeThickness(el) {
-            var thickness = el.value;
+        // function changeThickness(el) {
+
+        // }
+
+        $("#width_slide").change(function() {
+            var thickness = $(this).val();
             context.lineWidth = thickness;
-        }
+            // console.log(thickness)
+        });
+
         function startDrawing(e) {
             isDrawing = true;
             context.beginPath();
-            var x = e.pageX - canvas.offsetLeft;
-            var y = e.pageY - canvas.offsetTop;
-            context.moveTo(x, y);
+            var position = getXY(e);
+            context.moveTo(position.x, position.y);
         }
+
+
         function draw(e) {
             if(isDrawing) {
-                var x = e.pageX - canvas.offsetLeft;
-                var y = e.pageY - canvas.offsetTop;
-                context.lineTo(x, y);
+                var position = getXY(e);
+                context.lineTo(position.x, position.y);
                 context.stroke();
             }
+        }
+        function getXY(e) {
+            var x = e.pageX - canvas.offsetLeft;
+            var y = e.pageY - canvas.offsetTop;
+            return {x,y};
         }
         function stopDrawing() {
             isDrawing = false;
